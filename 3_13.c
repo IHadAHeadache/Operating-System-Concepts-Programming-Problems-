@@ -21,7 +21,7 @@ int allocate_pid(void)
 	{
 		if(i==MIN_PID/32)
 		{
-			MIN_PID_initial = MIN_PID % 32 - 1;
+			MIN_PID_initial = MIN_PID % 32;
 			remainder = 32 - (MIN_PID % 32);
 		}
 		else if(i==MAX_PID/32)
@@ -40,7 +40,7 @@ int allocate_pid(void)
 			if(specific_bit == 0)
 			{
 				pid_bitmap[i] = pid_bitmap[i] | ( 1 << j );
-				return i*32+(j+1);
+				return i*32+j;
 			}
 		}
 	}
