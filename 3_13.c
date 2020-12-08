@@ -34,7 +34,7 @@ int allocate_pid(void)
 			MIN_PID_initial = 0;
 			remainder = 32;
 		}
-		for(j = MIN_PID_initial; j < remainder; ++j)
+		for(j = MIN_PID_initial; j < MIN_PID_initial + remainder; ++j)
 		{
 			specific_bit = (pid_bitmap[i] & ( 1 << j )) >> j;
 			if(specific_bit == 0)
