@@ -14,7 +14,7 @@ char buffer[1024] = {0};
 time_t t;  
 struct tm tm;
 int valread;
-	while( (valread = read( *(int *)new_socket_ptr , buffer, 1024)) >= 0)
+	while( (valread = read( *(int *)new_socket_ptr , buffer, 1024)) > 0)
 	{
 		t = time(NULL);
 		tm = *localtime(&t);
