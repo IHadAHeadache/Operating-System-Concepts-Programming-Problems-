@@ -1,33 +1,34 @@
 #include <stdio.h>
 #include <pthread.h>
-#include <semaphore.h>
+#include <unistd.h>
 #define MAX_RESOURCES 5
-sem_t semaphore;
+pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 int available_resources = MAX_RESOURCES;
 int decrease_count(int count){
-	sem_wait(&semaphore);
+	pthread_mutex_lock(&mutex1);
 	if(available_resources < count){
-		sem_post(&semaphore);
+		pthread_mutex_unlock(&mutex1);
 		return -1;
 	}
 	else {
 		available_resources -= count;
-		sem_post(&semaphore);
+		pthread_mutex_unlock(&mutex1);
 		return 0;
 	}
 }
 int increase_count(int count){
-	sem_wait(&semaphore);
+	pthread_mutex_lock(&mutex1);
 	available_resources += count;
-	sem_post(&semaphore);
+	pthread_mutex_unlock(&mutex1);
 	return 0;
 }
 void *test(void* not_used)
 {
 	while(1)
 	{
-		decrease_count(3);
-		if(available_resources < 0)
+		while(decrease_count(3) == -1)
+			;
+		if(available_resources != 2)
 			printf("%d\n",available_resources);
 		increase_count(3);
 	}
@@ -37,7 +38,6 @@ int main(void)
 {
 pthread_t tid1, tid2;
 pthread_attr_t attr; pthread_attr_init(&attr);
-sem_open("semaphore", O_CREAT|O_EXCL,S_IRWXU, 1);
 	pthread_create(&tid1,&attr,test,NULL);
 	pthread_create(&tid2,&attr,test,NULL);
 	pthread_join(tid1,NULL);
